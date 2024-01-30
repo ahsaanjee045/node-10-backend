@@ -1,30 +1,19 @@
 require("dotenv").config();
 const express = require("express");
-const cors = require("cors")
+const cors = require("cors");
 const path = require("path");
 const todoRouter = require("./routes/todoroutes");
 const connectDB = require("./db/connectDB");
+const userRouter = require("./routes/userroutes");
 
 const app = express();
-const whitelist = ["https://www.google.com", "http://127.0.0.1:5500"]
 
-
-app.use(cors({
-    origin : function (origin, callback) {
-        console.log(origin)
-        if (whitelist.indexOf(origin) !== -1 || !origin) {
-          callback(null, true)
-        } else {
-          callback(new Error('Not allowed by CORS'))
-        }
-      }
-}))
-
-
+app.use(cors());
 app.use(express.json());
 app.use(express.static(path.resolve("public")));
 
 app.use("/todo", todoRouter);
+app.use("/user", userRouter);
 
 app.get("/", (req, res) => {
     res.status(200).json({

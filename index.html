@@ -30,7 +30,12 @@
 
             async function fetchTodos() {
                 try {
-                    let response = await fetch("http://localhost:5000/todo");
+                    let response = await fetch("http://localhost:5000/todo", {
+                        headers: {
+                            authorization:
+                                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NWJjOGM4NTllM2VhNzkwNjBmNDZiNDciLCJpYXQiOjE3MDY4NTY2MjYsImV4cCI6MTcwNjg1NjY0Nn0.ietWj1rWaJvCho2XJnZ9leIiQq42CQI3Tp5MkTPlG4Y",
+                        },
+                    });
                     let { todos } = await response.json();
                     container.innerHTML = "";
                     todos.forEach((todo) => {
@@ -65,7 +70,7 @@
                 }
             }
 
-            fetchTodos()
+            fetchTodos();
         </script>
 
         <!-- <div class="d-flex justify-content-between align-items-center border border-1 rounded-3 py-2 px-3 my-2">

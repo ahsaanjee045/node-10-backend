@@ -3,6 +3,8 @@ const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const { loginSchema } = require("../utils/validations");
 const jwt = require("jsonwebtoken");
+const CustomError = require("../utils/CustomError");
+const {uploadOnCloudinary, deleteFromCloudinary} = require("../utils/cloudinaryUpload");
 
 const registerUser = async (req, res, next) => {
     const errors = validationResult(req);
@@ -15,54 +17,62 @@ const registerUser = async (req, res, next) => {
     }
 
     try {
-        let data = req.body;
-        let userRegex = new RegExp("^" + data.username + "$");
-        let emailRegex = new RegExp("^" + data.email + "$");
+        // let fileUploadResult = await uploadOnCloudinary(req.file.path);
+        let fileUploadResult = await deleteFromCloudinary("myimages/riur1qdsrsd0nn1hdoj7")
+        console.log(fileUploadResult)
+        if(!fileUploadResult){
 
-        let user = await User.findOne({
-            $or: [
-                {
-                    username: {
-                        $regex: userRegex,
-                        $options: "i",
-                    },
-                },
-                {
-                    email: {
-                        $regex: emailRegex,
-                        $options: "i",
-                    },
-                },
-            ],
-        });
-
-        if (user) {
-            return next(
-                new CustomError(
-                    "User already registered. Please try with another email/username",
-                    400,
-                    false
-                )
-            );
+            next(new CustomError('File Upload Failed on Cloudinary', 400, false))
         }
 
-        let hashedPassword = await bcrypt.hash(data.password, 10);
+        // let data = req.body;
+        // let userRegex = new RegExp("^" + data.username + "$");
+        // let emailRegex = new RegExp("^" + data.email + "$");
+        // let user = await User.findOne({
+        //     $or: [
+        //         {
+        //             username: {
+        //                 $regex: userRegex,
+        //                 $options: "i",
+        //             },
+        //         },
+        //         {
+        //             email: {
+        //                 $regex: emailRegex,
+        //                 $options: "i",
+        //             },
+        //         },
+        //     ],
+        // });
+        // if (user) {
+        //     return next(
+        //         new CustomError(
+        //             "User already registered. Please try with another email/username",
+        //             400,
+        //             false
+        //         )
+        //     );
+        // }
 
-        let newUser = await new User({
-            username: data.username,
-            email: data.email,
-            password: hashedPassword,
-        }).save();
-
-        if (!newUser) {
-            return next(
-                new CustomError("Cannot create user at this time.", 400, false)
-            );
-        }
-
+        // let hashedPassword = await bcrypt.hash(data.password, 10);
+        // let newUser = await new User({
+        //     username: data.username,
+        //     email: data.email,
+        //     password: hashedPassword,
+        //     avatar: {
+        //         public_id : fileUploadResult.public_id,
+        //         url : fileUploadResult.secure_url,
+        //     },
+        // }).save();
+        // if (!newUser) {
+        //     // deleteFileFromLocal(req.file.path)
+        //     return next(
+        //         new CustomError("Cannot create user at this time.", 400, false)
+        //     );
+        // }
         return res.status(201).json({
             message: "User Registered Successfully.",
-            user: newUser,
+            user: fileUploadResult,
         });
     } catch (error) {
         new CustomError(error.message, 400, false);

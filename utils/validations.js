@@ -2,7 +2,7 @@ const { query, body, param, header, check } = require("express-validator");
 const { z } = require("zod");
 
 const registerValidations = [
-  body("username")
+  check("username")
     .trim()
     .notEmpty()
     .withMessage("Username is a required field.")
@@ -11,13 +11,13 @@ const registerValidations = [
       max: 60,
     })
     .withMessage("Username must be between 6 and 60 characters long."),
-  body("email")
+  check("email")
     .trim()
     .notEmpty()
     .withMessage("Email is a required field.")
     .isEmail()
     .withMessage("Email must be in a valid format"),
-  body("password")
+  check("password")
     .trim()
     .notEmpty()
     .withMessage("Password is a required field."),

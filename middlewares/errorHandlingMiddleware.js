@@ -10,6 +10,7 @@ const errorHandler = (err, req, res, next) => {
     }
     //    validation error
     else if (err.name === "CastError") {
+        console.log(err)
         err.message =
             "JWT Token is expired. Please login again to generate a new token.";
     } else if (err.name === "ValidationError") {

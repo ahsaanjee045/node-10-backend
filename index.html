@@ -1,85 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Document</title>
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-            crossorigin="anonymous"
-        />
-    </head>
-    <body>
-        <div class="container w-50 mx-auto">
-            <div id="todo-heading" class="mt-5">
-                <h1 class="fs-4">All Todos</h1>
-            </div>
-            <div id="todo-list-container"></div>
-        </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="file" name="" id="avatar" accept="image/*" >
 
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-            crossorigin="anonymous"
-        ></script>
 
-        <script>
-            let container = document.getElementById("todo-list-container");
+    <script>
+        // File 
+        // string -> base64
+        let input = document.getElementById("avatar")
 
-            async function fetchTodos() {
-                try {
-                    let response = await fetch("http://localhost:5000/todo", {
-                        headers: {
-                            authorization:
-                                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NWJjOGM4NTllM2VhNzkwNjBmNDZiNDciLCJpYXQiOjE3MDY4NTY2MjYsImV4cCI6MTcwNjg1NjY0Nn0.ietWj1rWaJvCho2XJnZ9leIiQq42CQI3Tp5MkTPlG4Y",
-                        },
-                    });
-                    let { todos } = await response.json();
-                    container.innerHTML = "";
-                    todos.forEach((todo) => {
-                        let div = document.createElement("div");
-                        div.className =
-                            "d-flex justify-content-between align-items-center border border-1 rounded-3 py-2 px-3 my-2";
+        input.addEventListener("change", function(e){
+  
+            let file = e.target.files[0]
+            
+            let formdata = new FormData()
 
-                        div.innerHTML = ` <p class="m-0">
-                                                ${todo.task}
-                                            </p>
-                                            <button onclick="handleDelete(event,'${todo._id}')" class="btn btn-danger">
-                                                Delete
-                                            </button>`;
 
-                        container.append(div);
-                    });
-                } catch (error) {
-                    console.log(error);
-                }
-            }
+            formdata.append("avatar", file)
+            formdata.append("username", "test user")
+            formdata.append("email", "test@example.com")
+            formdata.append("password", "test@1234")
 
-            async function handleDelete(e, todoid) {
-                console.log(todoid);
-                let res = await fetch("http://localhost:5000/todo/" + todoid, {
-                    method: "DELETE",
-                });
 
-                if (res.ok) {
-                    fetchTodos();
-                } else {
-                    alert("Error while deleting todo");
-                }
-            }
+            fetch("domeurl", {
+                method : "POST",
+                body : formdata
+            }).then().catch()
+        })
 
-            fetchTodos();
-        </script>
-
-        <!-- <div class="d-flex justify-content-between align-items-center border border-1 rounded-3 py-2 px-3 my-2">
-    <p class="m-0">
-        First Todo
-    </p>
-    <button class="btn btn-danger">
-        Delete
-    </button>
-</div> -->
-    </body>
+    </script>
+</body>
 </html>
